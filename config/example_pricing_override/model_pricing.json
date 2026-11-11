@@ -1,0 +1,7 @@
+{
+  "_meta": {"as_of": "2026-11-11", "notes": "Example: negotiated/committed rates. Only list what differs from list price. Use with --pricing-config config/example_pricing_override"},
+  "models": {
+    "gpt-5.5": {"provider": "openai", "tier": "frontier", "input": 4.25, "cached_input": 0.425, "output": 25.5, "batch_discount": 0.5, "successor": "gpt-6.1-sol", "notes": "15% enterprise discount"},
+    "ft:gpt-4o-mini:acme-demo::f9c2": {"provider": "openai", "tier": "budget", "input": 0.30, "cached_input": 0.15, "output": 1.20, "batch_discount": 0.5, "notes": "fine-tuned model: 2x base rate"}
+  }
+}

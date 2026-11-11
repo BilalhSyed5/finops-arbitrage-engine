@@ -1,0 +1,7 @@
+{
+  "_meta": {"notes": "Example: 1-year compute savings plan effective rates for two instance types."},
+  "instances": {
+    "g5.12xlarge": {"hourly": 3.9704, "vcpus": 48, "gpus": 4},
+    "p4d.24xlarge": {"hourly": 13.9208, "vcpus": 96, "gpus": 8}
+  }
+}

@@ -1,0 +1,2344 @@
+{
+  "schema": "finops-audit/2",
+  "engine_version": "2.0.0",
+  "generated_at": "2026-11-11",
+  "pricing": {
+    "as_of": "2026-11-11",
+    "files": [
+      "finops/data/model_pricing.json",
+      "finops/data/ec2_pricing.json"
+    ],
+    "stale": false
+  },
+  "summary": {
+    "monthly_spend": 54743.1989674286,
+    "monthly_savings": 39165.367312972725,
+    "annual_savings": 469984.4077556727,
+    "savings_by_confidence": {
+      "verified": 9362.780511919997,
+      "measured": 24032.025384319997,
+      "estimated": 5770.561416732704
+    }
+  },
+  "warnings": [
+    "1 model(s) have no price (ft:gpt-4o-mini:acme-demo::f9c2; 12,516,894 tokens/mo). They are excluded from all dollar figures — add them to a pricing override."
+  ],
+  "actions": [
+    {
+      "category": "shutdown",
+      "title": "Stop idle instance training-sandbox (p4d.24xlarge)",
+      "monthly_savings": 16020.265,
+      "confidence": "measured",
+      "effort": "infra change (snapshot + stop)",
+      "detail": "Idle 99% of the 14 days observed: stop it (snapshot first) or confirm an owner.",
+      "evidence": [
+        "idle 99% over 14 days"
+      ],
+      "annual_savings": 192243.1795
+    },
+    {
+      "category": "routing",
+      "title": "Route `classification` calls from gpt-5.5 to gpt-6-luna",
+      "monthly_savings": 9362.7805,
+      "confidence": "verified",
+      "effort": "config change at the gateway (alias swap)",
+      "detail": "quality proof passed",
+      "evidence": [
+        "$9,553/mo of traffic affected",
+        "1,042,112 requests/mo"
+      ],
+      "annual_savings": 112353.3661
+    },
+    {
+      "category": "model_refresh",
+      "title": "Upgrade claude-sonnet-4-5 → claude-sonnet-5-5 (newer, cheaper, same tier)",
+      "monthly_savings": 2664.395,
+      "confidence": "measured",
+      "effort": "config change + regression test",
+      "detail": "same-tier successor; regression-test before switching",
+      "evidence": [
+        "$7,993/mo of traffic affected",
+        "532,337 requests/mo"
+      ],
+      "annual_savings": 31972.7404
+    },
+    {
+      "category": "schedule",
+      "title": "Schedule llm-inference-prod (g5.12xlarge): stop 20:00→08:00 UTC on weeknights; off Sat–Sun",
+      "monthly_savings": 2660.3301,
+      "confidence": "measured",
+      "effort": "infra change (EventBridge Scheduler)",
+      "detail": "Schedule: stop 20:00→08:00 UTC on weeknights; off Sat–Sun (saves 108 h/week).",
+      "evidence": [],
+      "annual_savings": 31923.9607
+    },
+    {
+      "category": "rightsize",
+      "title": "Right-size rag-api: g6.12xlarge → g6.4xlarge",
+      "monthly_savings": 2391.9206,
+      "confidence": "estimated",
+      "effort": "infra change (stop → resize → start)",
+      "detail": "Right-size g6.12xlarge → g6.4xlarge (p95 active load: CPU 12%, GPU 15%).",
+      "evidence": [
+        "check GPU memory: the model must still fit on the smaller instance"
+      ],
+      "annual_savings": 28703.0477
+    },
+    {
+      "category": "routing",
+      "title": "Route `summarization` calls from gpt-4o to gpt-6.1-terra",
+      "monthly_savings": 1497.6876,
+      "confidence": "estimated",
+      "effort": "config change at the gateway (alias swap)",
+      "detail": "pending quality proof (run `finops proof`)",
+      "evidence": [
+        "$2,605/mo of traffic affected",
+        "130,514 requests/mo"
+      ],
+      "annual_savings": 17972.2513
+    },
+    {
+      "category": "schedule",
+      "title": "Schedule embedding-batch (g5.4xlarge): stop 04:00→02:00 UTC every night",
+      "monthly_savings": 1086.1312,
+      "confidence": "measured",
+      "effort": "infra change (EventBridge Scheduler)",
+      "detail": "Schedule: stop 04:00→02:00 UTC every night (saves 154 h/week).",
+      "evidence": [],
+      "annual_savings": 13033.5744
+    },
+    {
+      "category": "model_refresh",
+      "title": "Upgrade claude-opus-4-6 → claude-opus-5-5 (newer, cheaper, same tier)",
+      "monthly_savings": 760.8458,
+      "confidence": "measured",
+      "effort": "config change + regression test",
+      "detail": "same-tier successor; regression-test before switching",
+      "evidence": [
+        "$3,381/mo of traffic affected",
+        "35,053 requests/mo"
+      ],
+      "annual_savings": 9130.1502
+    },
+    {
+      "category": "schedule",
+      "title": "Schedule jupyter-gpu (g5.2xlarge): auto-stop during idle hours",
+      "monthly_savings": 751.6339,
+      "confidence": "estimated",
+      "effort": "infra change (EventBridge Scheduler)",
+      "detail": "~93% of running time looks idle: add auto-stop or move to serverless/on-demand inference.",
+      "evidence": [
+        "averages only: idle time is inferred, not measured; upload hourly utilization for a measured schedule"
+      ],
+      "annual_savings": 9019.607
+    },
+    {
+      "category": "caching",
+      "title": "Enable prompt caching for `invoice-extraction` on claude-sonnet-5-5",
+      "monthly_savings": 679.1395,
+      "confidence": "estimated",
+      "effort": "prompt restructuring / cache markers",
+      "detail": "assumes 30% of each long prompt is a stable prefix; log prompts to measure it",
+      "evidence": [
+        "$5,329/mo of traffic affected",
+        "532,337 requests/mo"
+      ],
+      "annual_savings": 8149.6738
+    },
+    {
+      "category": "batch",
+      "title": "Move `nightly-enrichment` on gpt-5.4-mini to the Batch API",
+      "monthly_savings": 654.0103,
+      "confidence": "measured",
+      "effort": "code change (async Batch API job)",
+      "detail": "non-interactive traffic; move to the provider's Batch API",
+      "evidence": [
+        "$1,308/mo of traffic affected",
+        "1,027,344 requests/mo"
+      ],
+      "annual_savings": 7848.1234
+    },
+    {
+      "category": "routing",
+      "title": "Tag, then route untagged gpt-5.5 calls that look like `classification` to gpt-6-luna",
+      "monthly_savings": 231.6337,
+      "confidence": "estimated",
+      "effort": "config change at the gateway (alias swap)",
+      "detail": "quality proof passed; task type inferred",
+      "evidence": [
+        "$236/mo of traffic affected",
+        "50,462 requests/mo"
+      ],
+      "annual_savings": 2779.6046
+    },
+    {
+      "category": "schedule",
+      "title": "Schedule ci-runner (c5.4xlarge): stop 23:00→08:00 UTC every night",
+      "monthly_savings": 186.048,
+      "confidence": "measured",
+      "effort": "infra change (EventBridge Scheduler)",
+      "detail": "Schedule: stop 23:00→08:00 UTC every night (saves 63 h/week).",
+      "evidence": [],
+      "annual_savings": 2232.576
+    },
+    {
+      "category": "caching",
+      "title": "Enable prompt caching for `doc-summaries` on gpt-6.1-terra",
+      "monthly_savings": 177.9492,
+      "confidence": "estimated",
+      "effort": "prompt restructuring / cache markers",
+      "detail": "assumes 30% of each long prompt is a stable prefix; log prompts to measure it",
+      "evidence": [
+        "$1,107/mo of traffic affected",
+        "130,514 requests/mo"
+      ],
+      "annual_savings": 2135.3908
+    },
+    {
+      "category": "caching",
+      "title": "Enable prompt caching for `support-triage` on gpt-6-luna",
+      "monthly_savings": 40.5968,
+      "confidence": "estimated",
+      "effort": "prompt restructuring / cache markers",
+      "detail": "assumes 30% of each long prompt is a stable prefix; log prompts to measure it",
+      "evidence": [
+        "$191/mo of traffic affected",
+        "1,042,112 requests/mo"
+      ],
+      "annual_savings": 487.1619
+    }
+  ],
+  "llm": {
+    "window_days": 14.0,
+    "window_inferred": true,
+    "sample_rate": 1.0,
+    "records_analyzed": 504,
+    "records_priced": 490,
+    "monthly_current": 28014.157,
+    "monthly_optimized": 11945.1185,
+    "lever_totals": {
+      "model_refresh": 3425.2409,
+      "routing": 11092.1018,
+      "caching": 897.6855,
+      "batch": 654.0103
+    },
+    "savings_by_confidence": {
+      "verified": 9362.7805,
+      "measured": 4079.2512,
+      "estimated": 2627.0069
+    },
+    "lever_lines": [
+      {
+        "lever": "routing",
+        "model": "gpt-5.5",
+        "target": "gpt-6-luna",
+        "task_type": "classification",
+        "feature": "support-triage",
+        "affected_monthly_cost": 9553.3273,
+        "monthly_savings": 9362.7805,
+        "requests_per_month": 1042112.0,
+        "confidence": "verified",
+        "method": "quality proof passed",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "model_refresh",
+        "model": "claude-sonnet-4-5",
+        "target": "claude-sonnet-5-5",
+        "task_type": "extraction",
+        "feature": "invoice-extraction",
+        "affected_monthly_cost": 7993.1851,
+        "monthly_savings": 2664.395,
+        "requests_per_month": 532336.5714,
+        "confidence": "measured",
+        "method": "same-tier successor; regression-test before switching",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "routing",
+        "model": "gpt-4o",
+        "target": "gpt-6.1-terra",
+        "task_type": "summarization",
+        "feature": "doc-summaries",
+        "affected_monthly_cost": 2605.1357,
+        "monthly_savings": 1497.6876,
+        "requests_per_month": 130513.7143,
+        "confidence": "estimated",
+        "method": "pending quality proof (run `finops proof`)",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "model_refresh",
+        "model": "claude-opus-4-6",
+        "target": "claude-opus-5-5",
+        "task_type": "complex_reasoning",
+        "feature": "research-agent",
+        "affected_monthly_cost": 3381.0975,
+        "monthly_savings": 760.8458,
+        "requests_per_month": 35053.3714,
+        "confidence": "measured",
+        "method": "same-tier successor; regression-test before switching",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "caching",
+        "model": "claude-sonnet-5-5",
+        "target": "",
+        "task_type": "extraction",
+        "feature": "invoice-extraction",
+        "affected_monthly_cost": 5328.7901,
+        "monthly_savings": 679.1395,
+        "requests_per_month": 532336.5714,
+        "confidence": "estimated",
+        "method": "assumes 30% of each long prompt is a stable prefix; log prompts to measure it",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "batch",
+        "model": "gpt-5.4-mini",
+        "target": "",
+        "task_type": "bulk_enrichment",
+        "feature": "nightly-enrichment",
+        "affected_monthly_cost": 1308.0206,
+        "monthly_savings": 654.0103,
+        "requests_per_month": 1027344.1143,
+        "confidence": "measured",
+        "method": "non-interactive traffic; move to the provider's Batch API",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "routing",
+        "model": "gpt-5.5",
+        "target": "gpt-6-luna",
+        "task_type": "classification",
+        "feature": "",
+        "affected_monthly_cost": 236.3402,
+        "monthly_savings": 231.6337,
+        "requests_per_month": 50461.8286,
+        "confidence": "estimated",
+        "method": "quality proof passed; task type inferred",
+        "task_sources": [
+          "inferred"
+        ]
+      },
+      {
+        "lever": "caching",
+        "model": "gpt-6.1-terra",
+        "target": "",
+        "task_type": "summarization",
+        "feature": "doc-summaries",
+        "affected_monthly_cost": 1107.4481,
+        "monthly_savings": 177.9492,
+        "requests_per_month": 130513.7143,
+        "confidence": "estimated",
+        "method": "assumes 30% of each long prompt is a stable prefix; log prompts to measure it",
+        "task_sources": [
+          "provided"
+        ]
+      },
+      {
+        "lever": "caching",
+        "model": "gpt-6-luna",
+        "target": "",
+        "task_type": "classification",
+        "feature": "support-triage",
+        "affected_monthly_cost": 190.5468,
+        "monthly_savings": 40.5968,
+        "requests_per_month": 1042112.0,
+        "confidence": "estimated",
+        "method": "assumes 30% of each long prompt is a stable prefix; log prompts to measure it",
+        "task_sources": [
+          "provided"
+        ]
+      }
+    ],
+    "by_model": {
+      "gpt-5.5": {
+        "current": 9789.6676,
+        "optimized": 154.6565,
+        "requests": 1092573.8286,
+        "input_tokens": 1925533869.8286,
+        "output_tokens": 5399941.1429,
+        "savings": 9635.011
+      },
+      "claude-sonnet-4-5": {
+        "current": 7993.1851,
+        "optimized": 4649.6506,
+        "requests": 532336.5714,
+        "input_tokens": 1594224136.2286,
+        "output_tokens": 214034179.2,
+        "savings": 3343.5345
+      },
+      "gpt-4o": {
+        "current": 2605.1357,
+        "optimized": 929.4988,
+        "requests": 130513.7143,
+        "input_tokens": 780479090.2857,
+        "output_tokens": 65393793.9429,
+        "savings": 1675.6368
+      },
+      "claude-opus-4-6": {
+        "current": 3381.0975,
+        "optimized": 2620.2516,
+        "requests": 35053.3714,
+        "input_tokens": 705219660.3429,
+        "output_tokens": 70363688.0,
+        "savings": 760.8458
+      },
+      "gpt-6.1-sol": {
+        "current": 2937.0507,
+        "optimized": 2937.0507,
+        "requests": 262106.6286,
+        "input_tokens": 1052891477.3714,
+        "output_tokens": 208157624.6857,
+        "savings": 0.0
+      },
+      "gpt-5.4-mini": {
+        "current": 1308.0206,
+        "optimized": 654.0103,
+        "requests": 1027344.1143,
+        "input_tokens": 823894385.6,
+        "output_tokens": 153355507.7714,
+        "savings": 654.0103
+      }
+    },
+    "by_provider": {
+      "openai": {
+        "current": 16639.8745,
+        "optimized": 4675.2163,
+        "requests": 2512538.2857,
+        "input_tokens": 4582798823.0857,
+        "output_tokens": 432306867.5429,
+        "savings": 11964.6582
+      },
+      "anthropic": {
+        "current": 11374.2825,
+        "optimized": 7269.9022,
+        "requests": 567389.9429,
+        "input_tokens": 2299443796.5714,
+        "output_tokens": 284397867.2,
+        "savings": 4104.3804
+      }
+    },
+    "by_task": {
+      "classification": {
+        "current": 9789.6676,
+        "optimized": 154.6565,
+        "requests": 1092573.8286,
+        "input_tokens": 1925533869.8286,
+        "output_tokens": 5399941.1429,
+        "savings": 9635.011
+      },
+      "extraction": {
+        "current": 7993.1851,
+        "optimized": 4649.6506,
+        "requests": 532336.5714,
+        "input_tokens": 1594224136.2286,
+        "output_tokens": 214034179.2,
+        "savings": 3343.5345
+      },
+      "summarization": {
+        "current": 2605.1357,
+        "optimized": 929.4988,
+        "requests": 130513.7143,
+        "input_tokens": 780479090.2857,
+        "output_tokens": 65393793.9429,
+        "savings": 1675.6368
+      },
+      "complex_reasoning": {
+        "current": 3381.0975,
+        "optimized": 2620.2516,
+        "requests": 35053.3714,
+        "input_tokens": 705219660.3429,
+        "output_tokens": 70363688.0,
+        "savings": 760.8458
+      },
+      "code_gen": {
+        "current": 2937.0507,
+        "optimized": 2937.0507,
+        "requests": 262106.6286,
+        "input_tokens": 1052891477.3714,
+        "output_tokens": 208157624.6857,
+        "savings": 0.0
+      },
+      "bulk_enrichment": {
+        "current": 1308.0206,
+        "optimized": 654.0103,
+        "requests": 1027344.1143,
+        "input_tokens": 823894385.6,
+        "output_tokens": 153355507.7714,
+        "savings": 654.0103
+      }
+    },
+    "by_team": {
+      "support": {
+        "current": 9553.3273,
+        "optimized": 149.95,
+        "requests": 1042112.0,
+        "input_tokens": 1879482547.0857,
+        "output_tokens": 5197153.6,
+        "savings": 9403.3773
+      },
+      "finance-ops": {
+        "current": 7993.1851,
+        "optimized": 4649.6506,
+        "requests": 532336.5714,
+        "input_tokens": 1594224136.2286,
+        "output_tokens": 214034179.2,
+        "savings": 3343.5345
+      },
+      "product": {
+        "current": 2605.1357,
+        "optimized": 929.4988,
+        "requests": 130513.7143,
+        "input_tokens": 780479090.2857,
+        "output_tokens": 65393793.9429,
+        "savings": 1675.6368
+      },
+      "research": {
+        "current": 3381.0975,
+        "optimized": 2620.2516,
+        "requests": 35053.3714,
+        "input_tokens": 705219660.3429,
+        "output_tokens": 70363688.0,
+        "savings": 760.8458
+      },
+      "platform": {
+        "current": 2937.0507,
+        "optimized": 2937.0507,
+        "requests": 262106.6286,
+        "input_tokens": 1052891477.3714,
+        "output_tokens": 208157624.6857,
+        "savings": 0.0
+      },
+      "data": {
+        "current": 1308.0206,
+        "optimized": 654.0103,
+        "requests": 1027344.1143,
+        "input_tokens": 823894385.6,
+        "output_tokens": 153355507.7714,
+        "savings": 654.0103
+      }
+    },
+    "by_feature": {
+      "support-triage": {
+        "current": 9553.3273,
+        "optimized": 149.95,
+        "requests": 1042112.0,
+        "input_tokens": 1879482547.0857,
+        "output_tokens": 5197153.6,
+        "savings": 9403.3773
+      },
+      "invoice-extraction": {
+        "current": 7993.1851,
+        "optimized": 4649.6506,
+        "requests": 532336.5714,
+        "input_tokens": 1594224136.2286,
+        "output_tokens": 214034179.2,
+        "savings": 3343.5345
+      },
+      "doc-summaries": {
+        "current": 2605.1357,
+        "optimized": 929.4988,
+        "requests": 130513.7143,
+        "input_tokens": 780479090.2857,
+        "output_tokens": 65393793.9429,
+        "savings": 1675.6368
+      },
+      "research-agent": {
+        "current": 3381.0975,
+        "optimized": 2620.2516,
+        "requests": 35053.3714,
+        "input_tokens": 705219660.3429,
+        "output_tokens": 70363688.0,
+        "savings": 760.8458
+      },
+      "code-copilot": {
+        "current": 2937.0507,
+        "optimized": 2937.0507,
+        "requests": 262106.6286,
+        "input_tokens": 1052891477.3714,
+        "output_tokens": 208157624.6857,
+        "savings": 0.0
+      },
+      "nightly-enrichment": {
+        "current": 1308.0206,
+        "optimized": 654.0103,
+        "requests": 1027344.1143,
+        "input_tokens": 823894385.6,
+        "output_tokens": 153355507.7714,
+        "savings": 654.0103
+      }
+    },
+    "by_customer": {
+      "cust-northwind": {
+        "current": 7006.7714,
+        "optimized": 2622.4488,
+        "requests": 595262.4,
+        "input_tokens": 1611580853.3714,
+        "output_tokens": 148108404.8,
+        "savings": 4384.3226
+      },
+      "cust-bluepeak": {
+        "current": 4567.7488,
+        "optimized": 1733.0458,
+        "requests": 388299.2,
+        "input_tokens": 1049845241.0286,
+        "output_tokens": 98849332.6857,
+        "savings": 2834.703
+      },
+      "cust-redfern": {
+        "current": 3022.8906,
+        "optimized": 1111.8092,
+        "requests": 258780.0,
+        "input_tokens": 691238257.3714,
+        "output_tokens": 63334569.6,
+        "savings": 1911.0814
+      },
+      "cust-oakline": {
+        "current": 2522.932,
+        "optimized": 945.127,
+        "requests": 215718.4,
+        "input_tokens": 579526100.5714,
+        "output_tokens": 54224514.7429,
+        "savings": 1577.805
+      },
+      "cust-silverbay": {
+        "current": 2295.4352,
+        "optimized": 866.4643,
+        "requests": 195400.3429,
+        "input_tokens": 528134073.2571,
+        "output_tokens": 49440868.4571,
+        "savings": 1428.9709
+      },
+      "cust-ironleaf": {
+        "current": 1837.7069,
+        "optimized": 697.7971,
+        "requests": 156177.8286,
+        "input_tokens": 424273250.6286,
+        "output_tokens": 39658254.8571,
+        "savings": 1139.9098
+      },
+      "cust-mapleton": {
+        "current": 1146.9719,
+        "optimized": 433.4871,
+        "requests": 98446.0571,
+        "input_tokens": 264985206.7429,
+        "output_tokens": 24558972.2286,
+        "savings": 713.4849
+      },
+      "cust-trial-042": {
+        "current": 688.242,
+        "optimized": 255.9708,
+        "requests": 58984.6857,
+        "input_tokens": 157494268.0,
+        "output_tokens": 14607834.0571,
+        "savings": 432.2711
+      }
+    },
+    "by_project": {},
+    "spend_by_task_source": {
+      "provided": 27777.8168,
+      "inferred": 236.3402
+    },
+    "coverage": {
+      "team": 99.1564,
+      "feature": 99.1564,
+      "customer": 82.418
+    },
+    "unpriced": {
+      "ft:gpt-4o-mini:acme-demo::f9c2": {
+        "input_tokens": 12463659.0857,
+        "output_tokens": 53234.7429,
+        "requests": 17601.6
+      }
+    },
+    "upcoming_price_changes": [],
+    "blocked_by_proof": {
+      "extraction: claude-sonnet-4-5 → claude-haiku-5-5": 7726.7456
+    },
+    "reconciliation": null,
+    "warnings": [
+      "1 model(s) have no price (ft:gpt-4o-mini:acme-demo::f9c2; 12,516,894 tokens/mo). They are excluded from all dollar figures — add them to a pricing override."
+    ],
+    "monthly_savings": 16069.0385,
+    "annual_savings": 192828.4624,
+    "savings_pct": 57.3604
+  },
+  "infra": {
+    "instances_audited": 8,
+    "monthly_compute_spend": 26729.0419,
+    "findings": [
+      {
+        "instance_id": "i-0a1b2c3d4e5f60012",
+        "instance_type": "p4d.24xlarge",
+        "name": "training-sandbox",
+        "team": "research",
+        "gpu": true,
+        "hourly_rate": 21.9576,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 16020.265,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 99.1071,
+        "p95_cpu_active": 60.3,
+        "p95_gpu_active": 80.3,
+        "zombie": true,
+        "schedule": null,
+        "schedule_savings": 16020.265,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "measured",
+        "severity": "critical",
+        "recommendation": "Idle 99% of the 14 days observed: stop it (snapshot first) or confirm an owner.",
+        "caveats": [],
+        "monthly_savings": 16020.265,
+        "overall_confidence": "measured"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60011",
+        "instance_type": "g5.12xlarge",
+        "name": "llm-inference-prod",
+        "team": "ml-platform",
+        "gpu": true,
+        "hourly_rate": 5.672,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 4138.2912,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 64.2857,
+        "p95_cpu_active": 37.7,
+        "p95_gpu_active": 67.7,
+        "zombie": false,
+        "schedule": {
+          "weekday_stop_hour": 20,
+          "weekday_start_hour": 8,
+          "weekend_off": true,
+          "hours_saved_per_week": 108.0,
+          "busy_hours_in_window_per_week": 0.0,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              20
+            ],
+            [
+              0,
+              21
+            ],
+            [
+              0,
+              22
+            ],
+            [
+              0,
+              23
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ],
+            [
+              1,
+              20
+            ],
+            [
+              1,
+              21
+            ],
+            [
+              1,
+              22
+            ],
+            [
+              1,
+              23
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              2,
+              20
+            ],
+            [
+              2,
+              21
+            ],
+            [
+              2,
+              22
+            ],
+            [
+              2,
+              23
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              20
+            ],
+            [
+              3,
+              21
+            ],
+            [
+              3,
+              22
+            ],
+            [
+              3,
+              23
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              20
+            ],
+            [
+              4,
+              21
+            ],
+            [
+              4,
+              22
+            ],
+            [
+              4,
+              23
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              5,
+              9
+            ],
+            [
+              5,
+              10
+            ],
+            [
+              5,
+              11
+            ],
+            [
+              5,
+              12
+            ],
+            [
+              5,
+              13
+            ],
+            [
+              5,
+              14
+            ],
+            [
+              5,
+              15
+            ],
+            [
+              5,
+              16
+            ],
+            [
+              5,
+              17
+            ],
+            [
+              5,
+              18
+            ],
+            [
+              5,
+              19
+            ],
+            [
+              5,
+              20
+            ],
+            [
+              5,
+              21
+            ],
+            [
+              5,
+              22
+            ],
+            [
+              5,
+              23
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ],
+            [
+              6,
+              7
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              6,
+              9
+            ],
+            [
+              6,
+              10
+            ],
+            [
+              6,
+              11
+            ],
+            [
+              6,
+              12
+            ],
+            [
+              6,
+              13
+            ],
+            [
+              6,
+              14
+            ],
+            [
+              6,
+              15
+            ],
+            [
+              6,
+              16
+            ],
+            [
+              6,
+              17
+            ],
+            [
+              6,
+              18
+            ],
+            [
+              6,
+              19
+            ],
+            [
+              6,
+              20
+            ],
+            [
+              6,
+              21
+            ],
+            [
+              6,
+              22
+            ],
+            [
+              6,
+              23
+            ]
+          ],
+          "every_night": false
+        },
+        "schedule_savings": 2660.3301,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "measured",
+        "severity": "critical",
+        "recommendation": "Schedule: stop 20:00→08:00 UTC on weeknights; off Sat–Sun (saves 108 h/week).",
+        "caveats": [],
+        "monthly_savings": 2660.3301,
+        "overall_confidence": "measured"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60014",
+        "instance_type": "g6.12xlarge",
+        "name": "rag-api",
+        "team": "ml-platform",
+        "gpu": true,
+        "hourly_rate": 4.6016,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 3357.3274,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 0.0,
+        "p95_cpu_active": 11.8,
+        "p95_gpu_active": 14.8,
+        "zombie": false,
+        "schedule": null,
+        "schedule_savings": 0.0,
+        "rightsize_to": "g6.4xlarge",
+        "rightsize_savings": 2391.9206,
+        "confidence": "measured",
+        "severity": "critical",
+        "recommendation": "Right-size g6.12xlarge → g6.4xlarge (p95 active load: CPU 12%, GPU 15%).",
+        "caveats": [
+          "check GPU memory: the model must still fit on the smaller instance"
+        ],
+        "monthly_savings": 2391.9206,
+        "overall_confidence": "estimated"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60013",
+        "instance_type": "g5.4xlarge",
+        "name": "embedding-batch",
+        "team": "data",
+        "gpu": true,
+        "hourly_rate": 1.624,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 1184.8704,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 91.6667,
+        "p95_cpu_active": 57.8,
+        "p95_gpu_active": 87.8,
+        "zombie": false,
+        "schedule": {
+          "weekday_stop_hour": 4,
+          "weekday_start_hour": 2,
+          "weekend_off": false,
+          "hours_saved_per_week": 154.0,
+          "busy_hours_in_window_per_week": 0.0,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              9
+            ],
+            [
+              0,
+              10
+            ],
+            [
+              0,
+              11
+            ],
+            [
+              0,
+              12
+            ],
+            [
+              0,
+              13
+            ],
+            [
+              0,
+              14
+            ],
+            [
+              0,
+              15
+            ],
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              17
+            ],
+            [
+              0,
+              18
+            ],
+            [
+              0,
+              19
+            ],
+            [
+              0,
+              20
+            ],
+            [
+              0,
+              21
+            ],
+            [
+              0,
+              22
+            ],
+            [
+              0,
+              23
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              1,
+              9
+            ],
+            [
+              1,
+              10
+            ],
+            [
+              1,
+              11
+            ],
+            [
+              1,
+              12
+            ],
+            [
+              1,
+              13
+            ],
+            [
+              1,
+              14
+            ],
+            [
+              1,
+              15
+            ],
+            [
+              1,
+              16
+            ],
+            [
+              1,
+              17
+            ],
+            [
+              1,
+              18
+            ],
+            [
+              1,
+              19
+            ],
+            [
+              1,
+              20
+            ],
+            [
+              1,
+              21
+            ],
+            [
+              1,
+              22
+            ],
+            [
+              1,
+              23
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              2,
+              9
+            ],
+            [
+              2,
+              10
+            ],
+            [
+              2,
+              11
+            ],
+            [
+              2,
+              12
+            ],
+            [
+              2,
+              13
+            ],
+            [
+              2,
+              14
+            ],
+            [
+              2,
+              15
+            ],
+            [
+              2,
+              16
+            ],
+            [
+              2,
+              17
+            ],
+            [
+              2,
+              18
+            ],
+            [
+              2,
+              19
+            ],
+            [
+              2,
+              20
+            ],
+            [
+              2,
+              21
+            ],
+            [
+              2,
+              22
+            ],
+            [
+              2,
+              23
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              3,
+              9
+            ],
+            [
+              3,
+              10
+            ],
+            [
+              3,
+              11
+            ],
+            [
+              3,
+              12
+            ],
+            [
+              3,
+              13
+            ],
+            [
+              3,
+              14
+            ],
+            [
+              3,
+              15
+            ],
+            [
+              3,
+              16
+            ],
+            [
+              3,
+              17
+            ],
+            [
+              3,
+              18
+            ],
+            [
+              3,
+              19
+            ],
+            [
+              3,
+              20
+            ],
+            [
+              3,
+              21
+            ],
+            [
+              3,
+              22
+            ],
+            [
+              3,
+              23
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              4,
+              9
+            ],
+            [
+              4,
+              10
+            ],
+            [
+              4,
+              11
+            ],
+            [
+              4,
+              12
+            ],
+            [
+              4,
+              13
+            ],
+            [
+              4,
+              14
+            ],
+            [
+              4,
+              15
+            ],
+            [
+              4,
+              16
+            ],
+            [
+              4,
+              17
+            ],
+            [
+              4,
+              18
+            ],
+            [
+              4,
+              19
+            ],
+            [
+              4,
+              20
+            ],
+            [
+              4,
+              21
+            ],
+            [
+              4,
+              22
+            ],
+            [
+              4,
+              23
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              5,
+              9
+            ],
+            [
+              5,
+              10
+            ],
+            [
+              5,
+              11
+            ],
+            [
+              5,
+              12
+            ],
+            [
+              5,
+              13
+            ],
+            [
+              5,
+              14
+            ],
+            [
+              5,
+              15
+            ],
+            [
+              5,
+              16
+            ],
+            [
+              5,
+              17
+            ],
+            [
+              5,
+              18
+            ],
+            [
+              5,
+              19
+            ],
+            [
+              5,
+              20
+            ],
+            [
+              5,
+              21
+            ],
+            [
+              5,
+              22
+            ],
+            [
+              5,
+              23
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ],
+            [
+              6,
+              7
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              6,
+              9
+            ],
+            [
+              6,
+              10
+            ],
+            [
+              6,
+              11
+            ],
+            [
+              6,
+              12
+            ],
+            [
+              6,
+              13
+            ],
+            [
+              6,
+              14
+            ],
+            [
+              6,
+              15
+            ],
+            [
+              6,
+              16
+            ],
+            [
+              6,
+              17
+            ],
+            [
+              6,
+              18
+            ],
+            [
+              6,
+              19
+            ],
+            [
+              6,
+              20
+            ],
+            [
+              6,
+              21
+            ],
+            [
+              6,
+              22
+            ],
+            [
+              6,
+              23
+            ]
+          ],
+          "every_night": true
+        },
+        "schedule_savings": 1086.1312,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "measured",
+        "severity": "critical",
+        "recommendation": "Schedule: stop 04:00→02:00 UTC every night (saves 154 h/week).",
+        "caveats": [],
+        "monthly_savings": 1086.1312,
+        "overall_confidence": "measured"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60018",
+        "instance_type": "g5.2xlarge",
+        "name": "jupyter-gpu",
+        "team": "research",
+        "gpu": true,
+        "hourly_rate": 1.212,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 884.2752,
+        "method": "average",
+        "days_observed": 0.0,
+        "idle_pct": 93.3333,
+        "p95_cpu_active": 60.0,
+        "p95_gpu_active": 37.5,
+        "zombie": false,
+        "schedule": null,
+        "schedule_savings": 751.6339,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "estimated",
+        "severity": "high",
+        "recommendation": "~93% of running time looks idle: add auto-stop or move to serverless/on-demand inference.",
+        "caveats": [
+          "averages only: idle time is inferred, not measured; upload hourly utilization for a measured schedule"
+        ],
+        "monthly_savings": 751.6339,
+        "overall_confidence": "estimated"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60015",
+        "instance_type": "c5.4xlarge",
+        "name": "ci-runner",
+        "team": "platform",
+        "gpu": false,
+        "hourly_rate": 0.68,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 496.128,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 69.9405,
+        "p95_cpu_active": 47.7,
+        "p95_gpu_active": 0.0,
+        "zombie": false,
+        "schedule": {
+          "weekday_stop_hour": 23,
+          "weekday_start_hour": 8,
+          "weekend_off": false,
+          "hours_saved_per_week": 63.0,
+          "busy_hours_in_window_per_week": 0.0,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              23
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ],
+            [
+              1,
+              23
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              2,
+              23
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              23
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              23
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ],
+            [
+              5,
+              23
+            ],
+            [
+              6,
+              0
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ],
+            [
+              6,
+              7
+            ],
+            [
+              6,
+              23
+            ]
+          ],
+          "every_night": true
+        },
+        "schedule_savings": 186.048,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "measured",
+        "severity": "medium",
+        "recommendation": "Schedule: stop 23:00→08:00 UTC every night (saves 63 h/week).",
+        "caveats": [],
+        "monthly_savings": 186.048,
+        "overall_confidence": "measured"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60016",
+        "instance_type": "m5.2xlarge",
+        "name": "api-backend",
+        "team": "platform",
+        "gpu": false,
+        "hourly_rate": 0.384,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 280.1664,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 0.0,
+        "p95_cpu_active": 53.2,
+        "p95_gpu_active": 0.0,
+        "zombie": false,
+        "schedule": null,
+        "schedule_savings": 0.0,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "measured",
+        "severity": "ok",
+        "recommendation": "",
+        "caveats": [],
+        "monthly_savings": 0.0,
+        "overall_confidence": "measured"
+      },
+      {
+        "instance_id": "i-0a1b2c3d4e5f60017",
+        "instance_type": "r5.2xlarge",
+        "name": "analytics-db",
+        "team": "data",
+        "gpu": false,
+        "hourly_rate": 0.504,
+        "rate_source": "price book (on-demand list)",
+        "running_hours_per_day": 24.0,
+        "monthly_cost": 367.7184,
+        "method": "timeseries",
+        "days_observed": 14.0,
+        "idle_pct": 0.0,
+        "p95_cpu_active": 53.1,
+        "p95_gpu_active": 0.0,
+        "zombie": false,
+        "schedule": null,
+        "schedule_savings": 0.0,
+        "rightsize_to": null,
+        "rightsize_savings": 0.0,
+        "confidence": "measured",
+        "severity": "ok",
+        "recommendation": "",
+        "caveats": [],
+        "monthly_savings": 0.0,
+        "overall_confidence": "measured"
+      }
+    ],
+    "healthy": [
+      "i-0a1b2c3d4e5f60016",
+      "i-0a1b2c3d4e5f60017"
+    ],
+    "unpriced": [],
+    "warnings": [],
+    "monthly_savings": 23096.3288,
+    "annual_savings": 277155.9453
+  },
+  "margins": {
+    "customers": [
+      {
+        "customer_id": "cust-bluepeak",
+        "monthly_revenue": 10900.0,
+        "ai_cost": 4567.7488,
+        "ai_cost_optimized": 1733.0458,
+        "ai_cost_pct": 41.906,
+        "ai_cost_pct_optimized": 15.8995
+      },
+      {
+        "customer_id": "cust-ironleaf",
+        "monthly_revenue": 5400.0,
+        "ai_cost": 1837.7069,
+        "ai_cost_optimized": 697.7971,
+        "ai_cost_pct": 34.0316,
+        "ai_cost_pct_optimized": 12.9222
+      },
+      {
+        "customer_id": "cust-silverbay",
+        "monthly_revenue": 10900.0,
+        "ai_cost": 2295.4352,
+        "ai_cost_optimized": 866.4643,
+        "ai_cost_pct": 21.059,
+        "ai_cost_pct_optimized": 7.9492
+      },
+      {
+        "customer_id": "cust-oakline",
+        "monthly_revenue": 14000.0,
+        "ai_cost": 2522.932,
+        "ai_cost_optimized": 945.127,
+        "ai_cost_pct": 18.0209,
+        "ai_cost_pct_optimized": 6.7509
+      },
+      {
+        "customer_id": "cust-redfern",
+        "monthly_revenue": 25200.0,
+        "ai_cost": 3022.8906,
+        "ai_cost_optimized": 1111.8092,
+        "ai_cost_pct": 11.9956,
+        "ai_cost_pct_optimized": 4.4119
+      },
+      {
+        "customer_id": "cust-mapleton",
+        "monthly_revenue": 12700.0,
+        "ai_cost": 1146.9719,
+        "ai_cost_optimized": 433.4871,
+        "ai_cost_pct": 9.0313,
+        "ai_cost_pct_optimized": 3.4133
+      },
+      {
+        "customer_id": "cust-northwind",
+        "monthly_revenue": 87600.0,
+        "ai_cost": 7006.7714,
+        "ai_cost_optimized": 2622.4488,
+        "ai_cost_pct": 7.9986,
+        "ai_cost_pct_optimized": 2.9937
+      }
+    ],
+    "alert_pct": 30.0,
+    "cost_without_revenue": {
+      "cust-trial-042": 688.242
+    },
+    "revenue_without_usage": 0
+  },
+  "inputs": [
+    {
+      "path": "sample_data/usage_daily.csv",
+      "format": "generic",
+      "rows": 504,
+      "records": 504,
+      "skipped": 0,
+      "skip_reasons": {}
+    },
+    {
+      "path": "sample_data/revenue.csv",
+      "format": "revenue",
+      "rows": 7,
+      "records": 7,
+      "skipped": 0,
+      "skip_reasons": {}
+    },
+    {
+      "path": "sample_data/inventory.csv",
+      "format": "inventory",
+      "rows": 8,
+      "records": 8,
+      "skipped": 0,
+      "skip_reasons": {}
+    },
+    {
+      "path": "sample_data/utilization.csv",
+      "format": "utilization",
+      "rows": 2352,
+      "records": 2352,
+      "skipped": 0,
+      "skip_reasons": {}
+    }
+  ],
+  "artifacts": [
+    "examples/actions/litellm_router.yaml",
+    "examples/actions/ec2_schedules.sh"
+  ]
+}

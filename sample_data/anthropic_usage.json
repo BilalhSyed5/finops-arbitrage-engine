@@ -1,0 +1,75 @@
+{
+  "has_more": false,
+  "next_page": null,
+  "data": [
+    {
+      "starting_at": "2026-10-28T00:00:00Z",
+      "ending_at": "2026-10-29T00:00:00Z",
+      "results": [
+        {
+          "model": "claude-sonnet-4-5-20250929",
+          "workspace_id": "wrkspc_finance",
+          "api_key_id": null,
+          "service_tier": "standard",
+          "context_window": "0-200k",
+          "uncached_input_tokens": 59000000,
+          "cache_read_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 7900000,
+          "server_tool_use": {
+            "web_search_requests": 0
+          }
+        }
+      ]
+    },
+    {
+      "starting_at": "2026-10-29T00:00:00Z",
+      "ending_at": "2026-10-30T00:00:00Z",
+      "results": [
+        {
+          "model": "claude-sonnet-4-5-20250929",
+          "workspace_id": "wrkspc_finance",
+          "api_key_id": null,
+          "service_tier": "standard",
+          "context_window": "0-200k",
+          "uncached_input_tokens": 59000000,
+          "cache_read_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 7900000,
+          "server_tool_use": {
+            "web_search_requests": 0
+          }
+        }
+      ]
+    },
+    {
+      "starting_at": "2026-10-30T00:00:00Z",
+      "ending_at": "2026-10-31T00:00:00Z",
+      "results": [
+        {
+          "model": "claude-sonnet-4-5-20250929",
+          "workspace_id": "wrkspc_finance",
+          "api_key_id": null,
+          "service_tier": "standard",
+          "context_window": "0-200k",
+          "uncached_input_tokens": 59000000,
+          "cache_read_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 7900000,
+          "server_tool_use": {
+            "web_search_requests": 0
+          }
+        }
+      ]
+    }
+  ]
+}

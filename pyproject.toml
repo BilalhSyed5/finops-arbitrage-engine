@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finops-arbitrage-engine"
+version = "2.0.0"
+description = "Audit LLM API and GPU/EC2 spend, prove cheaper routes on your own traffic, and emit ready-to-apply configs."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []          # the core is stdlib-only by design: easy to run inside a customer's VPC
+
+[project.optional-dependencies]
+aws = ["boto3>=1.28"]      # only for scripts/export_cloudwatch.py
+dev = ["pyyaml"]           # lets the tests parse the generated LiteLLM YAML
+
+[project.scripts]
+finops = "finops.cli:main"
+
+[tool.setuptools]
+packages = ["finops", "finops.ingest"]
+
+[tool.setuptools.package-data]
+finops = ["data/*.json"]

@@ -1,0 +1,9 @@
+instance_id,instance_type,name,team,avg_cpu_utilization_pct,avg_gpu_utilization_pct,running_hours_per_day,hourly_rate
+i-0a1b2c3d4e5f60011,g5.12xlarge,llm-inference-prod,ml-platform,,,,
+i-0a1b2c3d4e5f60012,p4d.24xlarge,training-sandbox,research,,,,
+i-0a1b2c3d4e5f60013,g5.4xlarge,embedding-batch,data,,,,
+i-0a1b2c3d4e5f60014,g6.12xlarge,rag-api,ml-platform,,,,
+i-0a1b2c3d4e5f60015,c5.4xlarge,ci-runner,platform,,,,
+i-0a1b2c3d4e5f60016,m5.2xlarge,api-backend,platform,,,,
+i-0a1b2c3d4e5f60017,r5.2xlarge,analytics-db,data,,,,
+i-0a1b2c3d4e5f60018,g5.2xlarge,jupyter-gpu,research,4.0,2.5,24,

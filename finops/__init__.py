@@ -1,16 +1,14 @@
 """FinOps Arbitrage Engine.
 
-A lightweight diagnostic toolkit that ingests LLM API usage logs and cloud
-infrastructure metrics to quantify capital waste and compute arbitrage savings.
+Turns raw LLM usage exports and cloud utilization data into a dollarized,
+confidence-labelled savings plan plus ready-to-apply configuration.
 
-Modules:
-    cost_calculator       -- Module A: Model ROI & arbitrage calculator.
-    infrastructure_audit  -- Module B: Idle GPU / EC2 right-sizing audit.
-    report_generator      -- Executive-ready Markdown report builder.
-    data_loader           -- Tolerant CSV/JSON ingestion with strict validation.
+Main entry points:
+    finops.ingest.load_usage            -- load + enrich usage exports
+    finops.llm_audit.analyze_llm_spend  -- LLM run-rate and savings levers
+    finops.infra_audit.analyze_infra    -- idle / oversized GPU & EC2 audit
+    finops.proof.run_proof              -- quality eval for proposed routes
+    finops.report                       -- Markdown + JSON reports
 """
 
-from finops import cost_calculator, infrastructure_audit, report_generator
-
-__all__ = ["cost_calculator", "infrastructure_audit", "report_generator"]
-__version__ = "1.0.0"
+__version__ = "2.0.0"

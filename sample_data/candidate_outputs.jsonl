@@ -1,0 +1,100 @@
+{"request_id": "req-triage-000", "output": "BILLING."}
+{"request_id": "req-triage-001", "output": "other"}
+{"request_id": "req-triage-002", "output": "other"}
+{"request_id": "req-triage-003", "output": "other"}
+{"request_id": "req-triage-004", "output": "bug"}
+{"request_id": "req-triage-005", "output": "bug"}
+{"request_id": "req-triage-006", "output": "account_access"}
+{"request_id": "req-triage-007", "output": "feature_request"}
+{"request_id": "req-triage-008", "output": "other"}
+{"request_id": "req-triage-009", "output": "ACCOUNT_ACCESS."}
+{"request_id": "req-triage-010", "output": "other"}
+{"request_id": "req-triage-011", "output": "feature_request"}
+{"request_id": "req-triage-012", "output": "account_access"}
+{"request_id": "req-triage-013", "output": "feature_request"}
+{"request_id": "req-triage-014", "output": "billing"}
+{"request_id": "req-triage-015", "output": "account_access"}
+{"request_id": "req-triage-016", "output": "billing"}
+{"request_id": "req-triage-017", "output": "other"}
+{"request_id": "req-triage-018", "output": "OTHER."}
+{"request_id": "req-triage-019", "output": "account_access"}
+{"request_id": "req-triage-020", "output": "other"}
+{"request_id": "req-triage-021", "output": "bug"}
+{"request_id": "req-triage-022", "output": "feature_request"}
+{"request_id": "req-triage-023", "output": "other"}
+{"request_id": "req-triage-024", "output": "account_access"}
+{"request_id": "req-triage-025", "output": "billing"}
+{"request_id": "req-triage-026", "output": "bug"}
+{"request_id": "req-triage-027", "output": "FEATURE_REQUEST."}
+{"request_id": "req-triage-028", "output": "account_access"}
+{"request_id": "req-triage-029", "output": "account_access"}
+{"request_id": "req-triage-030", "output": "bug"}
+{"request_id": "req-triage-031", "output": "billing"}
+{"request_id": "req-triage-032", "output": "bug"}
+{"request_id": "req-triage-033", "output": "other"}
+{"request_id": "req-triage-034", "output": "billing"}
+{"request_id": "req-triage-035", "output": "bug"}
+{"request_id": "req-triage-036", "output": "FEATURE_REQUEST."}
+{"request_id": "req-triage-037", "output": "account_access"}
+{"request_id": "req-triage-038", "output": "bug"}
+{"request_id": "req-triage-039", "output": "other"}
+{"request_id": "req-triage-040", "output": "other"}
+{"request_id": "req-triage-041", "output": "feature_request"}
+{"request_id": "req-triage-042", "output": "bug"}
+{"request_id": "req-triage-043", "output": "bug"}
+{"request_id": "req-triage-044", "output": "bug"}
+{"request_id": "req-triage-045", "output": "OTHER."}
+{"request_id": "req-triage-046", "output": "account_access"}
+{"request_id": "req-triage-047", "output": "billing"}
+{"request_id": "req-triage-048", "output": "other"}
+{"request_id": "req-triage-049", "output": "other"}
+{"request_id": "req-triage-050", "output": "billing"}
+{"request_id": "req-triage-051", "output": "account_access"}
+{"request_id": "req-triage-052", "output": "other"}
+{"request_id": "req-triage-053", "output": "bug"}
+{"request_id": "req-triage-054", "output": "BUG."}
+{"request_id": "req-triage-055", "output": "other"}
+{"request_id": "req-triage-056", "output": "bug"}
+{"request_id": "req-triage-057", "output": "other"}
+{"request_id": "req-triage-058", "output": "account_access"}
+{"request_id": "req-triage-059", "output": "account_access"}
+{"request_id": "req-extract-000", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20500\", \"total\": 4244.37, \"currency\": \"USD\", \"due_date\": \"2026-12-14\"}\n```"}
+{"request_id": "req-extract-001", "output": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20501\", \"total\": 8396, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"}
+{"request_id": "req-extract-002", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20502\", \"total\": 2787.43, \"currency\": \"USD\", \"due_date\": \"2026-12-20\"}\n```"}
+{"request_id": "req-extract-003", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20503\", \"total\": 4120.05, \"currency\": \"USD\", \"due_date\": \"2026-12-27\"}\n```"}
+{"request_id": "req-extract-004", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20504\", \"total\": 3703.66, \"currency\": \"USD\", \"due_date\": \"2026-12-12\"}\n```"}
+{"request_id": "req-extract-005", "output": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20505\", \"total\": 9689, \"currency\": \"USD\", \"due_date\": \"2026-12-13\"}\n```"}
+{"request_id": "req-extract-006", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20506\", \"total\": 7242.37, \"currency\": \"USD\", \"due_date\": \"2026-12-19\"}\n```"}
+{"request_id": "req-extract-007", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20507\", \"total\": 4443.04, \"currency\": \"USD\", \"due_date\": \"2026-12-21\"}\n```"}
+{"request_id": "req-extract-008", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20508\", \"total\": 2195.95, \"currency\": \"USD\", \"due_date\": \"2026-12-02\"}\n```"}
+{"request_id": "req-extract-009", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20509\", \"total\": 6064, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"}
+{"request_id": "req-extract-010", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20510\", \"total\": 3886.52, \"currency\": \"USD\", \"due_date\": \"2026-12-17\"}\n```"}
+{"request_id": "req-extract-011", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20511\", \"total\": 8089.11, \"currency\": \"USD\", \"due_date\": \"2026-12-07\"}\n```"}
+{"request_id": "req-extract-012", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20512\", \"total\": 740.3, \"currency\": \"USD\", \"due_date\": \"2026-11-21\"}\n```"}
+{"request_id": "req-extract-013", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20513\", \"total\": 6015, \"currency\": \"USD\", \"due_date\": \"2026-12-23\"}\n```"}
+{"request_id": "req-extract-014", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20514\", \"total\": 6063.19, \"currency\": \"USD\", \"due_date\": \"2026-12-10\"}\n```"}
+{"request_id": "req-extract-015", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20515\", \"total\": 676.24, \"currency\": \"USD\", \"due_date\": \"2026-12-26\"}\n```"}
+{"request_id": "req-extract-016", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20516\", \"total\": 4369.25, \"currency\": \"USD\", \"due_date\": \"2026-11-19\"}\n```"}
+{"request_id": "req-extract-017", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20517\", \"total\": 445, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"}
+{"request_id": "req-extract-018", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20518\", \"total\": 1760.59, \"currency\": \"USD\", \"due_date\": \"2026-11-09\"}\n```"}
+{"request_id": "req-extract-019", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20519\", \"total\": 6460.59, \"currency\": \"USD\", \"due_date\": \"2026-11-17\"}\n```"}
+{"request_id": "req-extract-020", "output": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20520\", \"total\": 7667.23, \"currency\": \"USD\", \"due_date\": \"2026-11-29\"}\n```"}
+{"request_id": "req-extract-021", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20521\", \"total\": 5793, \"currency\": \"USD\", \"due_date\": \"2026-12-10\"}\n```"}
+{"request_id": "req-extract-022", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20522\", \"total\": 9017.64, \"currency\": \"USD\", \"due_date\": \"2026-12-12\"}\n```"}
+{"request_id": "req-extract-023", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20523\", \"total\": 8977.29, \"currency\": \"USD\", \"due_date\": \"2026-11-29\"}\n```"}
+{"request_id": "req-extract-024", "output": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20524\", \"total\": 2310.54, \"currency\": \"USD\", \"due_date\": \"2026-11-19\"}\n```"}
+{"request_id": "req-extract-025", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20525\", \"total\": 5685, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"}
+{"request_id": "req-extract-026", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20526\", \"total\": 5020.38, \"currency\": \"USD\", \"due_date\": \"2026-12-12\"}\n```"}
+{"request_id": "req-extract-027", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20527\", \"total\": 2968.36, \"currency\": \"USD\", \"due_date\": \"2026-11-14\"}\n```"}
+{"request_id": "req-extract-028", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20528\", \"total\": 7991.27, \"currency\": \"USD\", \"due_date\": \"2026-12-13\"}\n```"}
+{"request_id": "req-extract-029", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20529\", \"total\": 9471, \"currency\": \"USD\", \"due_date\": \"2026-12-13\"}\n```"}
+{"request_id": "req-extract-030", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20530\", \"total\": 7452.34, \"currency\": \"USD\", \"due_date\": \"2026-12-26\"}\n```"}
+{"request_id": "req-extract-031", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20531\", \"total\": 8798.35, \"currency\": \"USD\", \"due_date\": \"2026-11-08\"}\n```"}
+{"request_id": "req-extract-032", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20532\", \"total\": 2615.7, \"currency\": \"USD\", \"due_date\": \"2026-12-01\"}\n```"}
+{"request_id": "req-extract-033", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20533\", \"total\": 7866, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"}
+{"request_id": "req-extract-034", "output": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20534\", \"total\": 5305.11, \"currency\": \"USD\", \"due_date\": \"2026-12-21\"}\n```"}
+{"request_id": "req-extract-035", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20535\", \"total\": 2900.96, \"currency\": \"USD\", \"due_date\": \"2026-12-02\"}\n```"}
+{"request_id": "req-extract-036", "output": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20536\", \"total\": 5488.06, \"currency\": \"USD\", \"due_date\": \"2026-11-18\"}\n```"}
+{"request_id": "req-extract-037", "output": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20537\", \"total\": 3542, \"currency\": \"USD\", \"due_date\": \"2026-12-13\"}\n```"}
+{"request_id": "req-extract-038", "output": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20538\", \"total\": 9288.1, \"currency\": \"USD\", \"due_date\": \"2026-12-20\"}\n```"}
+{"request_id": "req-extract-039", "output": "```json\n{\"vendor\": \"Meadow Logistics\", \"invoice_number\": \"INV-20539\", \"total\": 7255.25, \"currency\": \"USD\", \"due_date\": \"2026-11-22\"}\n```"}
