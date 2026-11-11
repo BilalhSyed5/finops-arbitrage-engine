@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "threshold": 0.9,
+  "samples_considered": 100,
+  "notes": [],
+  "results": [
+    {
+      "task_type": "classification",
+      "candidate": "gpt-6-luna",
+      "n": 60,
+      "passed": 59,
+      "errors": 0,
+      "scorer": "label match",
+      "pass_rate": 0.9833333333333333,
+      "ci_low": 0.911446617732205,
+      "ci_high": 0.9970519161391264,
+      "verdict": "pass",
+      "failures": [
+        {
+          "key": "req-triage-017",
+          "reason": "expected 'billing', got 'other'",
+          "prompt": "system: You are the support triage assistant for a B2B invoicing platform. Classify the customer ticket into exactly one category and respond with only the cate",
+          "production": "billing",
+          "candidate": "other"
+        }
+      ]
+    },
+    {
+      "task_type": "extraction",
+      "candidate": "claude-haiku-5-5",
+      "n": 40,
+      "passed": 30,
+      "errors": 0,
+      "scorer": "json field match",
+      "pass_rate": 0.75,
+      "ci_low": 0.5980574093302989,
+      "ci_high": 0.8581303210445049,
+      "verdict": "fail",
+      "failures": [
+        {
+          "key": "req-extract-001",
+          "reason": "field accuracy 60%",
+          "prompt": "user: Extract vendor, invoice_number, total, currency and due_date from this invoice and return only JSON.\n\nINVOICE\nFrom: Cobalt Office Ltd\nInvoice no. INV-2050",
+          "production": "{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20501\", \"total\": 8396.18, \"currency\": \"USD\", \"due_date\": \"2026-12-04\"}",
+          "candidate": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20501\", \"total\": 8396, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"
+        },
+        {
+          "key": "req-extract-005",
+          "reason": "field accuracy 80%",
+          "prompt": "user: Extract vendor, invoice_number, total, currency and due_date from this invoice and return only JSON.\n\nINVOICE\nFrom: Cobalt Office Ltd\nInvoice no. INV-2050",
+          "production": "{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20505\", \"total\": 9688.76, \"currency\": \"USD\", \"due_date\": \"2026-12-13\"}",
+          "candidate": "```json\n{\"vendor\": \"Cobalt Office Ltd\", \"invoice_number\": \"INV-20505\", \"total\": 9689, \"currency\": \"USD\", \"due_date\": \"2026-12-13\"}\n```"
+        },
+        {
+          "key": "req-extract-009",
+          "reason": "field accuracy 60%",
+          "prompt": "user: Extract vendor, invoice_number, total, currency and due_date from this invoice and return only JSON.\n\nINVOICE\nFrom: Quarry Labs\nInvoice no. INV-20509\nAmou",
+          "production": "{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20509\", \"total\": 6063.77, \"currency\": \"USD\", \"due_date\": \"2026-12-20\"}",
+          "candidate": "```json\n{\"vendor\": \"Quarry Labs\", \"invoice_number\": \"INV-20509\", \"total\": 6064, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"
+        },
+        {
+          "key": "req-extract-013",
+          "reason": "field accuracy 80%",
+          "prompt": "user: Extract vendor, invoice_number, total, currency and due_date from this invoice and return only JSON.\n\nINVOICE\nFrom: Lumen Supply Co\nInvoice no. INV-20513\n",
+          "production": "{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20513\", \"total\": 6015.4, \"currency\": \"USD\", \"due_date\": \"2026-12-23\"}",
+          "candidate": "```json\n{\"vendor\": \"Lumen Supply Co\", \"invoice_number\": \"INV-20513\", \"total\": 6015, \"currency\": \"USD\", \"due_date\": \"2026-12-23\"}\n```"
+        },
+        {
+          "key": "req-extract-017",
+          "reason": "field accuracy 60%",
+          "prompt": "user: Extract vendor, invoice_number, total, currency and due_date from this invoice and return only JSON.\n\nINVOICE\nFrom: Harbor Freight Partners\nInvoice no. IN",
+          "production": "{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20517\", \"total\": 445.34, \"currency\": \"USD\", \"due_date\": \"2026-12-15\"}",
+          "candidate": "```json\n{\"vendor\": \"Harbor Freight Partners\", \"invoice_number\": \"INV-20517\", \"total\": 445, \"currency\": \"usd$\", \"due_date\": \"unknown\"}\n```"
+        }
+      ]
+    }
+  ]
+}

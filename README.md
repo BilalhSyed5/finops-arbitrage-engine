@@ -1,133 +1,139 @@
 # FinOps Arbitrage Engine
 
-A lightweight, developer-first diagnostic CLI that ingests **raw LLM API cost logs**
-and **cloud resource inventories** and outputs an executive-ready Markdown P&L
-savings report. It quantifies:
+**Find what your AI and GPU spend could cost, prove the cheaper option holds up on your own traffic, and hand engineers the config to ship it.**
 
-1. **Model arbitrage (Module A)** — how much you'd save by routing
-   classification / extraction / summarization traffic from frontier models
-   (GPT-4o, Claude 3.5 Sonnet) to budget open-weight models
-   (Llama 3.x via Groq/Together).
-2. **Infrastructure right-sizing (Module B)** — idle and under-utilized
-   GPU/EC2 instances, dollarized per instance ("Instance X runs 24/7 but sits
-   idle 18h → schedule auto-shutdown / serverless inference to save $X/mo").
+A developer-first CLI that reads LLM usage exports (OpenAI, Anthropic, LiteLLM, or any CSV/JSON) and EC2/GPU utilization, then produces:
+
+1. **A dollarized savings plan.** Every number is labelled ✅ *verified*, 📏 *measured* or 🔶 *estimated*, so nobody has to take it on faith.
+2. **A quality proof.** It replays a sample of your real prompts on the cheaper model and scores the answers against production. A route that fails is blocked, not recommended.
+3. **Ready-to-apply changes.** A LiteLLM router config and an EventBridge Scheduler script for idle instances.
+4. **Unit economics.** Cost per team, feature and customer, and AI cost as a share of each customer's revenue.
+
+The core is pure Python standard library: no dependencies, runs inside a customer's VPC, and their data never has to leave it.
+
+```bash
+python finops_audit.py audit --demo          # full sample company: report + configs
+```
+
+See the output in [`examples/demo_report.md`](examples/demo_report.md) and [`examples/actions/`](examples/actions/).
+
+---
+
+## What it finds
+
+| Lever | What it does | Typical confidence |
+|---|---|---|
+| **Model refresh** | Same-tier successor that is cheaper (e.g. Claude Sonnet 4.5 → 5.5, GPT-4o → GPT-6.1 Sol). Works for every task type. | 📏 measured |
+| **Task routing** | Classification, extraction, tagging, summarization… → a cheaper model, *only if it's actually cheaper for that traffic*. Defaults to the same provider (a config change, not a vendor migration). | 🔶 → ✅ after `finops proof` |
+| **Prompt caching** | Measured from shared prompt prefixes when prompts are logged; otherwise a stated, conservative assumption. | 📏 / 🔶 |
+| **Batch API** | Non-interactive traffic (nightly jobs, backfills) at 50% off. | 📏 measured |
+| **Idle instances** | Hour-by-hour idle windows from CloudWatch data → a concrete stop/start schedule, with the busy hours it would interrupt. | 📏 measured |
+| **Zombies** | Instances idle ~all the time. | 📏 measured |
+| **Right-sizing** | Smallest same-family size that fits p95 active load (CPU and GPU count). | 🔶 estimated (GPU memory isn't visible) |
+
+The levers stack without double counting: each is applied to the cost left by the previous one, so they always sum to the total.
+
+It also flags **announced price increases** on models you use, **unpriced models** (fine-tunes, new releases: excluded, never guessed), and **reconciliation** gaps between list-price math and what you were billed (a sign you have negotiated rates to load).
 
 ## Quick start
 
 ```bash
-# Run against the bundled sample data
-python finops_audit.py --demo
+# Python 3.10+. No install needed; or `pip install .` to get a `finops` command.
+python finops_audit.py audit --demo -o report.md --actions-dir out/
 
-# Audit your own data (Markdown report to stdout)
-python finops_audit.py --log path/to/api_logs.csv --inventory path/to/inventory.json
+# Your data
+python finops_audit.py audit \
+  --usage litellm_spend_logs.json \
+  --inventory inventory.csv --utilization utilization.csv \
+  --revenue revenue.csv \
+  -o report.md --json report.json --actions-dir out/
 
-# Save the report to a file
-python finops_audit.py --log api_logs.csv -o savings_report.md
+# Prove the routes before switching (replays prompts through any OpenAI-compatible API)
+export FINOPS_API_KEY=sk-...
+python finops_audit.py proof --usage request_log.jsonl --base-url http://localhost:4000 \
+  --judge-model gpt-6.1-sol -o proof.json
+python finops_audit.py audit --usage litellm_spend_logs.json --proof proof.json ...
 
-# Audit a LiteLLM proxy spend-log export (with team/feature attribution)
-python finops_audit.py --litellm litellm_spend_logs.json
+# Inspect prices
+python finops_audit.py pricing claude-sonnet-4-5 gpt-4o-mini-2024-07-18
+python finops_audit.py pricing --list anthropic
 
-# Use a custom pricing config directory
-python finops_audit.py --demo --pricing-config path/to/my_config
-
-# Run the smoke tests
-python -m unittest discover -s tests -v
+# Tests
+python -m unittest discover -s tests -t .
 ```
 
-## Input formats
+v1 flags (`--log`, `--litellm`, no subcommand) still work.
 
-**LiteLLM proxy logs** (`--litellm`, JSON array or JSONL): the adapter maps `model`/`prompt_tokens`/`completion_tokens`/`startTime` and pulls attribution from `metadata.task_type`, `metadata.team`, `metadata.feature`, `end_user`, or `tags: ["team:x", "feature:y"]`. See [sample_data/litellm_logs.json](sample_data/litellm_logs.json).
+## Getting the data
 
-**API usage log** (`--log`, CSV or JSON list):
+| Source | How to export | Flag |
+|---|---|---|
+| **LiteLLM proxy** (best: per-request, with team/feature/customer tags) | `GET /spend/logs` or export the `LiteLLM_SpendLogs` table. Turn on `store_prompts_in_spend_logs` to enable proof mode and measured caching. | `--usage` |
+| **OpenAI** | Usage API (admin key): `GET /v1/organization/usage/completions?start_time=…&bucket_width=1d&group_by=model&group_by=project_id`. Save the raw page(s). | `--usage` + `--attribution` |
+| **Anthropic** | Admin API: `GET /v1/organizations/usage_report/messages?starting_at=…&bucket_width=1d&group_by[]=model&group_by[]=workspace_id`. Save the raw page(s). | `--usage` + `--attribution` |
+| **Anything else** | CSV/JSON/JSONL with `model`, `input_tokens`, `output_tokens` (aliases like `prompt_tokens` work) and optionally `timestamp`, `requests`, `cached_input_tokens`, `task_type`, `team`, `feature`, `customer_id`, `actual_spend`, `prompt`/`messages`, `response`. | `--usage` |
+| **EC2 + CloudWatch** | `pip install boto3 && python scripts/export_cloudwatch.py --days 14` (read-only IAM). GPU % needs the CloudWatch agent's NVIDIA plugin. | `--inventory`, `--utilization` |
+| **Revenue** | CSV `customer_id, monthly_revenue`. | `--revenue` |
 
-| timestamp | model_used | input_tokens | output_tokens | task_type |
-|---|---|---|---|---|
-| 2025-11-03T09:14:00 | gpt-4o | 1240 | 86 | classification |
-| 2025-11-03T09:15:03 | claude-3-5-sonnet | 3200 | 1450 | complex_reasoning |
+Formats are auto-detected; force one with `--format`. Bad rows are skipped and counted (shown under *Inputs* in the report), never silently dropped.
 
-Supported `task_type` values (case-insensitive): `classification`, `extraction`,
-`summarization`, `simple_qa`, `tagging`, `routing`, `deduplication`,
-`formatting` (routed to budget models), plus `complex_reasoning`, `code_gen`,
-and anything else (kept on frontier). Unknown models are priced conservatively
-at the most expensive frontier rate so waste is never under-reported.
+**Provider exports don't say what a call was for.** Most teams use one project or API key per feature, so a short [`--attribution`](sample_data/attribution.json) map (glob rules: project/key/model → team, feature, task type) usually covers most of the spend. Whatever is left is inferred from prompt text or token shape. Inferred task types are labelled, and savings that rely on them are never marked verified.
 
-**Cloud inventory** (`--inventory`, CSV or JSON list):
+## The confidence model
 
-```json
-{
-  "instance_id": "i-0a1b2c3d4e5f60011",
-  "instance_type": "g5.12xlarge",
-  "avg_cpu_utilization_pct": 8.2,
-  "avg_gpu_utilization_pct": 6.1,
-  "running_hours_per_day": 24
-}
-```
+| Label | Meaning |
+|---|---|
+| ✅ **verified** | The route passed a quality proof on your traffic: Wilson 95% lower bound of the pass rate ≥ threshold (default 90%, ≥30 samples). |
+| 📏 **measured** | Computed directly from your data at list (or your override) prices. |
+| 🔶 **estimated** | Depends on an assumption the report states: an unproven route, an assumed cacheable prefix, average-only utilization, right-sizing. |
 
-An optional `hourly_rate` field overrides the pricing table (useful for
-reserved/spot rates or other clouds).
+**Proof scoring** depends on the task: exact label match (classification, tagging, routing), JSON field-level match (extraction, formatting), or an LLM judge for free text (`--judge-model`). Without a judge, free text is scored by lexical F1, and that alone can never produce a pass. Point `--base-url` at OpenAI, at Anthropic's or Google's OpenAI-compatible endpoints, or at your LiteLLM proxy. Use `--candidate-outputs` to score answers you generated in your own pipeline. A `--max-cost` guard (default $5) stops an expensive replay before it starts.
 
-## Pricing configuration
+## Configuration
 
-Prices are **config-driven**, not hardcoded. `config/model_pricing.json`
-(frontier + budget token prices, USD per 1M tokens as `[input, output]`) and
-`config/ec2_pricing.json` (EC2 hourly rates) merge over built-in defaults.
-Override a few SKUs or replace whole tables — commit a snapshot alongside
-each report for reproducibility:
+Defaults (prices as of 2026-11-11, routing policy, thresholds) live in `finops/data/`. Override them by merging, not by editing: `--pricing-config DIR` for negotiated rates and fine-tunes, `--policy FILE` for routing targets, cross-provider moves and proof thresholds. See [`config/README.md`](config/README.md).
 
-```bash
-python finops_audit.py --log api_logs.csv --pricing-config my_config/
-```
-
-## Attribution & unit economics
-
-Add optional `team`, `feature`, and `customer_id` columns (or LiteLLM
-metadata tags) and the report gains a **Unit economics** section: monthly
-cost and savings per team, feature, and customer. Join those lines against
-revenue to get true AI gross margin. Untagged records are excluded and the
-report shows your attribution coverage so you know what's invisible.
+Prices go stale fast. Every report shows the price-book date and warns after 45 days.
 
 ## Architecture
 
 ```
-finops_audit.py            CLI entrypoint (argparse, error handling, exit codes)
+finops_audit.py          CLI shim  →  finops/cli.py (audit | proof | pricing)
 finops/
-  data_loader.py           Tolerant CSV/JSON ingestion + strict row validation
-  pricing_config.py        Config-driven pricing (model + EC2), built-in fallbacks
-  cost_calculator.py       Module A: routing policy, run-rate math, attribution rollups
-  infrastructure_audit.py  Module B: idle/under-utilization detection, $ waste
-  report_generator.py      Executive Markdown report rendering
-  adapters/
-    litellm.py             LiteLLM proxy spend-log adapter (with tag attribution)
-config/                    model_pricing.json, ec2_pricing.json (override defaults)
-tests/test_finops.py       Smoke tests (unittest, stdlib only)
-sample_data/               Demo api_logs.csv, inventory.json, litellm_logs.json
+  models.py              UsageRecord (normalized usage) + Confidence labels
+  pricing.py             PriceBook: model-name resolution, cache/batch/long-context cost math
+  policy.py              Lever policy (routing targets, caching/batch/proof settings)
+  ingest/                adapters (generic, LiteLLM, OpenAI, Anthropic), attribution map, task inference
+  llm_audit.py           Run-rate, attribution, the four stacked LLM levers
+  infra_audit.py         Time-series idle schedules, zombies, right-sizing; average-mode fallback
+  proof.py               Sampling, OpenAI-compatible client, scorers, Wilson verdicts
+  margin.py              AI cost vs. customer revenue
+  actions.py             Ranked action plan, LiteLLM config, EC2 scheduler script
+  report.py              Markdown + JSON rendering
+  data/                  Default price book and policy
+scripts/
+  export_cloudwatch.py   Customer-side EC2 + CloudWatch export
+  generate_demo_data.py  Rebuilds sample_data/ (fictional company)
+tests/                   71 unittest cases (stdlib only)
 ```
 
-Each module is importable standalone, so the analysis layer can be wrapped in
-a FastAPI endpoint or web UI later without touching the CLI:
+Every module works without the CLI, so a FastAPI service or web UI can wrap it directly:
 
 ```python
-from finops.data_loader import load_records
-from finops.cost_calculator import analyze_api_costs
+from finops.ingest import load_usage
+from finops.pricing import load_pricebook
+from finops.policy import load_policy
+from finops.llm_audit import analyze_llm_spend
 
-rows = load_records("api_logs.csv",
-                    ("timestamp", "model_used", "input_tokens",
-                     "output_tokens", "task_type"),
-                    ("input_tokens", "output_tokens"))
-result = analyze_api_costs(rows)
-print(result.annual_savings)
+book = load_pricebook()
+records, reports, _ = load_usage(["spend_logs.json"])
+result = analyze_llm_spend(records, book, load_policy(None, book))
+print(result.monthly_savings, result.savings_by_confidence)
 ```
 
-## Maintenance notes
+## Known limits
 
-- **Pricing tables** live in `config/*.json` (with built-in defaults in
-  `finops/pricing_config.py`). They are reasonable published list prices but
-  should be refreshed from provider pricing pages before board-level
-  decisions.
-- **Routing policy** is the `BUDGET_ELIGIBLE_TASKS` set in `cost_calculator.py`.
-  Tune it per product: add a task type there (and a budget model in
-  `DEFAULT_BUDGET_MODEL_BY_TASK`) once an A/B eval proves quality parity.
-- **Utilization thresholds** (`IDLE_UTILIZATION_PCT`, `SEVERE_UNDER_UTILIZATION_PCT`)
-  are in `infrastructure_audit.py`.
-- Malformed rows are skipped with a warning to stderr; if *every* row is
-  malformed, the tool exits with code 1 and a clear message.
+- **Untested against live exports.** The OpenAI and Anthropic usage-export adapters follow the documented formats and are tested on fixtures, not yet on real customer files. Validate on the first real export.
+- **Routing assumes similar token counts on the new model.** Reasoning models can spend more output tokens; the proof step is where that shows up.
+- **Prices are list prices with an `as_of` date.** OpenAI and Gemini have promotional and introductory rates that change on announced dates. Refresh `finops/data/model_pricing.json` regularly.
+- **Infrastructure covers EC2 only for now.** No Kubernetes, SageMaker, or GCP/Azure yet. Instances with only average utilization get estimates, not schedules.

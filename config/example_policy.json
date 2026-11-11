@@ -1,0 +1,10 @@
+{
+  "_comment": "Example policy override: merged over finops/data/routing_policy.json. Use with --policy config/example_policy.json",
+  "cross_provider": true,
+  "routable_tasks": {
+    "summarization": null,
+    "sentiment": {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-2.5-flash-lite", "default": "gpt-6-luna"}}
+  },
+  "batch": {"tasks": ["deduplication", "backfill", "offline_eval", "bulk_enrichment", "report_generation"]},
+  "proof": {"pass_threshold": 0.95, "min_samples": 50}
+}

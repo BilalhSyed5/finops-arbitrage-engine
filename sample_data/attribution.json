@@ -1,0 +1,34 @@
+{
+  "rules": [
+    {
+      "match": {
+        "project": "proj_support*"
+      },
+      "set": {
+        "team": "support",
+        "feature": "support-triage",
+        "task_type": "classification"
+      }
+    },
+    {
+      "match": {
+        "project": "proj_nightly"
+      },
+      "set": {
+        "team": "data",
+        "feature": "nightly-enrichment",
+        "task_type": "bulk_enrichment"
+      }
+    },
+    {
+      "match": {
+        "project": "wrkspc_finance"
+      },
+      "set": {
+        "team": "finance-ops",
+        "feature": "invoice-extraction",
+        "task_type": "extraction"
+      }
+    }
+  ]
+}

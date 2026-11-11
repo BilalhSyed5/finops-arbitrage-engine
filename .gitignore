@@ -2,11 +2,20 @@
 __pycache__/
 *.py[cod]
 *.egg-info/
+build/
+dist/
 .venv/
 venv/
 
-# Generated reports (unless intentionally committed)
+# Audit outputs (examples/ is committed on purpose)
 *.report.md
+/finops_out/
+proof_results.json
+!sample_data/proof_results.json
+
+# Customer data never belongs in the repo
+/audit_data/
+/customer_data/
 
 # Tooling
 .pytest_cache/
@@ -18,5 +27,5 @@ venv/
 Thumbs.db
 
 # Local secrets / private configs
-config/*local*.json
+config/*local*
 .env

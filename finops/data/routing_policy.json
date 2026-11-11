@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "as_of": "2026-11-11",
+    "notes": "Which traffic may move to cheaper models, and to which ones. Override with --policy my_policy.json (keys you set replace the defaults). Targets are chosen by the provider of the model currently serving the traffic; 'default' is used when cross_provider is true or the provider has no entry."
+  },
+  "cross_provider": false,
+  "model_refresh": true,
+  "routable_tasks": {
+    "classification": {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-2.5-flash-lite", "open-weight": "llama-3.1-8b-instruct", "default": "gpt-6-luna"}},
+    "extraction":     {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-3.5-flash-lite", "open-weight": "llama-3.1-8b-instruct", "default": "gpt-6-luna"}},
+    "tagging":        {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-2.5-flash-lite", "open-weight": "llama-3.1-8b-instruct", "default": "gpt-6-luna"}},
+    "routing":        {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-2.5-flash-lite", "open-weight": "llama-3.1-8b-instruct", "default": "gpt-6-luna"}},
+    "deduplication":  {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-2.5-flash-lite", "open-weight": "llama-3.1-8b-instruct", "default": "gpt-6-luna"}},
+    "formatting":     {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-2.5-flash-lite", "open-weight": "llama-3.1-8b-instruct", "default": "gpt-6-luna"}},
+    "simple_qa":      {"targets": {"openai": "gpt-6-luna", "anthropic": "claude-haiku-5-5", "google": "gemini-3.5-flash-lite", "open-weight": "llama-3.3-70b-instruct", "default": "gpt-6-luna"}},
+    "translation":    {"targets": {"openai": "gpt-6.1-terra", "anthropic": "claude-haiku-5-5", "google": "gemini-3.8-flash", "open-weight": "llama-3.3-70b-instruct", "default": "gpt-6.1-terra"}},
+    "summarization":  {"targets": {"openai": "gpt-6.1-terra", "anthropic": "claude-haiku-5-5", "google": "gemini-3.8-flash", "open-weight": "llama-3.3-70b-instruct", "default": "gpt-6.1-terra"}}
+  },
+  "caching": {
+    "min_prompt_tokens": 1024,
+    "min_shared_prefix_tokens": 1024,
+    "assumed_cacheable_fraction": 0.30,
+    "assumed_hit_rate": 0.80,
+    "min_requests_for_assumption": 1000,
+    "chars_per_token": 4.0
+  },
+  "batch": {
+    "tasks": ["deduplication", "backfill", "offline_eval", "bulk_enrichment"],
+    "feature_patterns": ["*batch*", "*nightly*", "*backfill*", "*offline*", "*bulk*"]
+  },
+  "proof": {
+    "pass_threshold": 0.90,
+    "min_samples": 30
+  }
+}
