@@ -1,0 +1,16 @@
+{
+  "_comment": "AWS EC2 on-demand hourly rates (us-east-1 list), USD/hr. Merges over built-in defaults in finops/pricing_config.py. Add your committed/spot rates here, or pass hourly_rate per instance in the inventory.",
+  "instances": {
+    "m5.xlarge": 0.192, "m5.2xlarge": 0.384, "m5.4xlarge": 0.768,
+    "m5.12xlarge": 2.304, "m6i.4xlarge": 0.768, "m6i.8xlarge": 1.536,
+    "t3.large": 0.0832, "t3.xlarge": 0.1664, "t3.2xlarge": 0.3328,
+    "c5.2xlarge": 0.34, "c5.4xlarge": 0.68, "c5.9xlarge": 1.53,
+    "r5.xlarge": 0.252, "r5.2xlarge": 0.504, "r5.4xlarge": 1.008,
+    "g5.xlarge": 1.006, "g5.2xlarge": 1.212, "g5.4xlarge": 2.03,
+    "g5.12xlarge": 5.672, "g5.48xlarge": 22.33,
+    "g6.xlarge": 0.804, "g6.12xlarge": 4.715,
+    "p4d.24xlarge": 32.77, "p4de.24xlarge": 40.96,
+    "p5.48xlarge": 98.32,
+    "p3.2xlarge": 3.06, "p3.8xlarge": 12.24
+  }
+}

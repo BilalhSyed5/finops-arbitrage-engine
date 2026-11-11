@@ -1,5 +1,6 @@
 """Smoke tests for the FinOps Arbitrage Engine. Run with: python -m unittest tests.test_finops -v"""
 
+import os
 import unittest
 
 from finops.cost_calculator import analyze_api_costs, resolve_pricing
@@ -89,6 +90,81 @@ class TestLoaderAndReport(unittest.TestCase):
         self.assertIn("$", report)
         self.assertIn("Module A", report)
         self.assertIn("Module B", report)
+
+
+class TestPricingConfig(unittest.TestCase):
+    def test_load_pricing_merges_overrides(self):
+        from finops.pricing_config import Pricing, load_pricing
+        pricing = load_pricing()  # bundled config/ dir, mirrors built-ins
+        self.assertEqual(pricing.frontier["gpt-4o"], (2.50, 10.00))
+        self.assertEqual(pricing.ec2_hourly["g5.12xlarge"], 5.672)
+        self.assertIn("config", pricing.source)
+
+        empty = Pricing()  # pure built-in defaults
+        self.assertEqual(empty.frontier["gpt-4o"], (2.50, 10.00))
+
+
+class TestAttribution(unittest.TestCase):
+    def _rows(self):
+        return [
+            {"timestamp": "2025-11-01T09:00:00", "model_used": "gpt-4o",
+             "input_tokens": 1_000_000, "output_tokens": 100_000,
+             "task_type": "classification", "team": "growth",
+             "feature": "lead-scoring", "customer_id": "cust-acme"},
+            {"timestamp": "2025-11-08T09:00:00", "model_used": "gpt-4o",
+             "input_tokens": 1_000_000, "output_tokens": 100_000,
+             "task_type": "classification"},  # untagged
+        ]
+
+    def test_tagged_rollups_exclude_untagged(self):
+        result = analyze_api_costs(self._rows(), sample_days=30)
+        self.assertEqual(result.tagged_records, 1)
+        self.assertEqual(set(result.by_team), {"growth"})
+        # Feature and customer rollups share the by_feature dimension,
+        # with customer keys namespaced under a 'customer:' prefix.
+        self.assertEqual(set(result.by_feature), {"lead-scoring", "customer:cust-acme"})
+        self.assertGreater(result.by_team["growth"]["current"], 0)
+        self.assertLess(result.by_team["growth"]["optimized"],
+                        result.by_team["growth"]["current"])
+
+    def test_report_shows_unit_economics_section(self):
+        result = analyze_api_costs(self._rows(), sample_days=30)
+        report = generate_report(arbitrage=result)
+        self.assertIn("Unit economics", report)
+        self.assertIn("lead-scoring", report)
+
+
+class TestLiteLLMAdapter(unittest.TestCase):
+    def test_loads_and_maps_fields(self):
+        from finops.adapters.litellm import load_litellm_records
+        rows = load_litellm_records(os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "sample_data", "litellm_logs.json"))
+        self.assertEqual(len(rows), 10)
+        first = rows[0]
+        self.assertEqual(first["model_used"], "openai/gpt-4o")
+        self.assertEqual(first["input_tokens"], 1240)
+        self.assertEqual(first["task_type"], "classification")
+        self.assertEqual(first["team"], "growth")
+        self.assertEqual(first["customer_id"], "cust-acme")
+        # Tag-based fallback (r-010 uses tags list, not metadata keys)
+        tagged = [r for r in rows if r["feature"] == "dedup"]
+        self.assertEqual(len(tagged), 1)
+        self.assertEqual(tagged[0]["team"], "ml-infra")
+
+    def test_adapter_rows_feed_module_a(self):
+        from finops.adapters.litellm import load_litellm_records
+        rows = load_litellm_records(os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "sample_data", "litellm_logs.json"))
+        result = analyze_api_costs(rows, sample_days=2)
+        self.assertGreater(result.current_monthly_spend, 0)
+        self.assertGreater(result.records_rerouted, 0)
+
+    def test_missing_file_raises(self):
+        from finops.adapters.litellm import load_litellm_records
+        with self.assertRaises(FileNotFoundError):
+            load_litellm_records("no_such_file.json")
 
 
 if __name__ == "__main__":

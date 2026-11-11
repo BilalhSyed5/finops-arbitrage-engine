@@ -8,6 +8,9 @@ running_hours_per_day) and flags dead capital:
 * Severely under-utilized GPU instances that should be right-sized,
   scheduled, or moved to serverless inference.
 * Dollarized monthly savings for each recommendation.
+
+Hourly rates are config-driven (finops/pricing_config.py, overridable via
+config/ec2_pricing.json) with built-in us-east-1 list prices as defaults.
 """
 
 from __future__ import annotations
@@ -15,8 +18,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Sequence
 
+from finops.pricing_config import Pricing, load_pricing
+
 __all__ = [
+    "PRICING",
     "EC2_ON_DEMAND_HOURLY_USD",
+    "use_pricing",
     "InstanceFinding",
     "InfraAuditResult",
     "analyze_infrastructure",
@@ -24,29 +31,23 @@ __all__ = [
 
 # ---------------------------------------------------------------------------
 # On-demand hourly pricing (us-east-1 list prices, USD/hr).
-# Refresh from https://aws.amazon.com/ec2/pricing/on-demand/ as needed.
+# Config-driven: see finops/pricing_config.py; override via
+# config/ec2_pricing.json. Refresh from
+# https://aws.amazon.com/ec2/pricing/on-demand/ as needed.
 # ---------------------------------------------------------------------------
 
-EC2_ON_DEMAND_HOURLY_USD: Dict[str, float] = {
-    # General purpose (CPU)
-    "m5.xlarge": 0.192, "m5.2xlarge": 0.384, "m5.4xlarge": 0.768,
-    "m5.12xlarge": 2.304, "m6i.4xlarge": 0.768, "m6i.8xlarge": 1.536,
-    "t3.large": 0.0832, "t3.xlarge": 0.1664, "t3.2xlarge": 0.3328,
-    # Compute optimized
-    "c5.2xlarge": 0.34, "c5.4xlarge": 0.68, "c5.9xlarge": 1.53,
-    # Memory optimized
-    "r5.xlarge": 0.252, "r5.2xlarge": 0.504, "r5.4xlarge": 1.008,
-    # GPU — NVIDIA A10G (inference)
-    "g5.xlarge": 1.006, "g5.2xlarge": 1.212, "g5.4xlarge": 2.03,
-    "g5.12xlarge": 5.672, "g5.48xlarge": 22.33,
-    "g6.xlarge": 0.804, "g6.12xlarge": 4.715,
-    # GPU — NVIDIA A100 (training / heavy inference)
-    "p4d.24xlarge": 32.77, "p4de.24xlarge": 40.96,
-    # GPU — NVIDIA H100
-    "p5.48xlarge": 98.32,
-    # Legacy
-    "p3.2xlarge": 3.06, "p3.8xlarge": 12.24,
-}
+PRICING: Pricing = load_pricing()
+
+# Compatibility alias (kept for external callers; analyze_infrastructure
+# reads PRICING directly so use_pricing() stays effective).
+EC2_ON_DEMAND_HOURLY_USD: Dict[str, float] = PRICING.ec2_hourly
+
+
+def use_pricing(pricing: Pricing) -> None:
+    """Swap the active pricing snapshot (and refresh the legacy alias)."""
+    global PRICING, EC2_ON_DEMAND_HOURLY_USD
+    PRICING = pricing
+    EC2_ON_DEMAND_HOURLY_USD = pricing.ec2_hourly
 
 HOURS_PER_MONTH = 730.0
 DAYS_PER_MONTH = 30.4
@@ -160,7 +161,7 @@ def analyze_infrastructure(rows: Sequence[Dict]) -> InfraAuditResult:
         if row.get("hourly_rate") is not None:
             hourly_rate = float(row["hourly_rate"])
         else:
-            hourly_rate = EC2_ON_DEMAND_HOURLY_USD.get(instance_type)
+            hourly_rate = PRICING.ec2_hourly.get(instance_type)
             if hourly_rate is None:
                 # Rough fallback: $0.10/core-hour heuristic scaled by vCPU hint.
                 hourly_rate = 0.10 * max(4, _guess_vcpus(instance_type))

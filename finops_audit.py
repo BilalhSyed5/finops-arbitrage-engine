@@ -22,9 +22,11 @@ import os
 import sys
 
 from finops import cost_calculator, infrastructure_audit, report_generator
+from finops.adapters.litellm import load_litellm_records
 from finops.cost_calculator import analyze_api_costs
 from finops.data_loader import DataLoadError, load_records
 from finops.infrastructure_audit import analyze_infrastructure
+from finops.pricing_config import load_pricing
 from finops.report_generator import generate_report
 
 API_LOG_FIELDS = ("timestamp", "model_used", "input_tokens", "output_tokens", "task_type")
@@ -53,17 +55,28 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         help="Write the Markdown report to FILE (default: stdout).")
     parser.add_argument("--sample-days", type=float, default=None,
                         help="Override the inferred API-log sampling window in days.")
+    parser.add_argument("--litellm", metavar="JSON|JSONL",
+                        help="LiteLLM proxy spend-log export instead of --log "
+                             "(supports metadata tags for attribution).")
+    parser.add_argument("--pricing-config", metavar="DIR",
+                        help="Directory containing model_pricing.json / "
+                             "ec2_pricing.json overrides (default: bundled config/).")
     parser.add_argument("--demo", action="store_true",
                         help="Run against the bundled sample data instead of file inputs.")
     return parser
 
 
 def run_audit(log_path: str | None, inventory_path: str | None,
-              sample_days: float | None) -> str:
+              sample_days: float | None, litellm_path: str | None = None) -> str:
     """Execute the requested audit modules and return the Markdown report."""
     sources: dict[str, str] = {}
     arbitrage = None
     infra = None
+
+    if litellm_path:
+        rows = load_litellm_records(litellm_path)
+        sources["LiteLLM spend logs"] = litellm_path
+        arbitrage = analyze_api_costs(rows, sample_days=sample_days)
 
     if log_path:
         rows = load_records(log_path, API_LOG_FIELDS, API_LOG_NUMERIC)
@@ -96,19 +109,29 @@ def main(argv: list[str] | None = None) -> int:
     _force_utf8_stdio()
     args = build_arg_parser().parse_args(argv)
 
+    # Pricing snapshot must be loaded before any analysis runs.
+    pricing = load_pricing(args.pricing_config)
+    cost_calculator.use_pricing(pricing)
+    infrastructure_audit.use_pricing(pricing)
+    print(f"[info] Pricing source: {pricing.source}", file=sys.stderr)
+
     if args.demo:
         args.log = os.path.join(DEMO_DIR, "api_logs.csv")
         args.inventory = os.path.join(DEMO_DIR, "inventory.json")
 
-    if not args.log and not args.inventory:
+    if not args.log and not args.inventory and not args.litellm:
         build_arg_parser().print_help()
-        print("\nerror: provide --log and/or --inventory (or use --demo).",
+        print("\nerror: provide --log, --litellm and/or --inventory (or use --demo).",
               file=sys.stderr)
         return 2
 
     try:
-        report = run_audit(args.log, args.inventory, args.sample_days)
+        report = run_audit(args.log, args.inventory, args.sample_days,
+                           litellm_path=args.litellm)
     except DataLoadError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    except (ValueError, FileNotFoundError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
 

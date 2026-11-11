@@ -1,0 +1,22 @@
+{
+  "_comment": "LLM token pricing, USD per 1M tokens as [input, output]. Merges over built-in defaults in finops/pricing_config.py. Refresh from provider pricing pages and commit snapshots alongside reports.",
+  "frontier": {
+    "gpt-4o": [2.50, 10.00],
+    "gpt-4o-mini": [0.15, 0.60],
+    "o1": [15.00, 60.00],
+    "o3-mini": [1.10, 4.40],
+    "claude-3-5-sonnet": [3.00, 15.00],
+    "claude-3-7-sonnet": [3.00, 15.00],
+    "claude-3-5-haiku": [0.80, 4.00],
+    "gemini-1.5-pro": [1.25, 5.00],
+    "gemini-1.5-flash": [0.075, 0.30]
+  },
+  "budget": {
+    "llama-3.1-8b-instruct": [0.05, 0.08],
+    "llama-3.1-70b-instruct": [0.88, 0.88],
+    "llama-3.3-70b-instruct": [0.88, 0.88],
+    "mixtral-8x7b-instruct": [0.24, 0.24],
+    "qwen-2.5-72b-instruct": [1.20, 1.20],
+    "deepseek-v3": [0.27, 1.10]
+  }
+}

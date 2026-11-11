@@ -24,11 +24,19 @@ python finops_audit.py --log path/to/api_logs.csv --inventory path/to/inventory.
 # Save the report to a file
 python finops_audit.py --log api_logs.csv -o savings_report.md
 
+# Audit a LiteLLM proxy spend-log export (with team/feature attribution)
+python finops_audit.py --litellm litellm_spend_logs.json
+
+# Use a custom pricing config directory
+python finops_audit.py --demo --pricing-config path/to/my_config
+
 # Run the smoke tests
 python -m unittest discover -s tests -v
 ```
 
 ## Input formats
+
+**LiteLLM proxy logs** (`--litellm`, JSON array or JSONL): the adapter maps `model`/`prompt_tokens`/`completion_tokens`/`startTime` and pulls attribution from `metadata.task_type`, `metadata.team`, `metadata.feature`, `end_user`, or `tags: ["team:x", "feature:y"]`. See [sample_data/litellm_logs.json](sample_data/litellm_logs.json).
 
 **API usage log** (`--log`, CSV or JSON list):
 
@@ -55,8 +63,28 @@ at the most expensive frontier rate so waste is never under-reported.
 }
 ```
 
-An optional `hourly_rate` field overrides the built-in AWS on-demand pricing
-table (useful for reserved/spot rates or other clouds).
+An optional `hourly_rate` field overrides the pricing table (useful for
+reserved/spot rates or other clouds).
+
+## Pricing configuration
+
+Prices are **config-driven**, not hardcoded. `config/model_pricing.json`
+(frontier + budget token prices, USD per 1M tokens as `[input, output]`) and
+`config/ec2_pricing.json` (EC2 hourly rates) merge over built-in defaults.
+Override a few SKUs or replace whole tables — commit a snapshot alongside
+each report for reproducibility:
+
+```bash
+python finops_audit.py --log api_logs.csv --pricing-config my_config/
+```
+
+## Attribution & unit economics
+
+Add optional `team`, `feature`, and `customer_id` columns (or LiteLLM
+metadata tags) and the report gains a **Unit economics** section: monthly
+cost and savings per team, feature, and customer. Join those lines against
+revenue to get true AI gross margin. Untagged records are excluded and the
+report shows your attribution coverage so you know what's invisible.
 
 ## Architecture
 
@@ -64,11 +92,15 @@ table (useful for reserved/spot rates or other clouds).
 finops_audit.py            CLI entrypoint (argparse, error handling, exit codes)
 finops/
   data_loader.py           Tolerant CSV/JSON ingestion + strict row validation
-  cost_calculator.py       Module A: pricing tables, routing policy, run-rate math
+  pricing_config.py        Config-driven pricing (model + EC2), built-in fallbacks
+  cost_calculator.py       Module A: routing policy, run-rate math, attribution rollups
   infrastructure_audit.py  Module B: idle/under-utilization detection, $ waste
   report_generator.py      Executive Markdown report rendering
+  adapters/
+    litellm.py             LiteLLM proxy spend-log adapter (with tag attribution)
+config/                    model_pricing.json, ec2_pricing.json (override defaults)
 tests/test_finops.py       Smoke tests (unittest, stdlib only)
-sample_data/               Demo api_logs.csv and inventory.json
+sample_data/               Demo api_logs.csv, inventory.json, litellm_logs.json
 ```
 
 Each module is importable standalone, so the analysis layer can be wrapped in
@@ -88,10 +120,10 @@ print(result.annual_savings)
 
 ## Maintenance notes
 
-- **Pricing tables** live at the top of `cost_calculator.py` (token prices)
-  and `infrastructure_audit.py` (EC2 hourly rates). They are reasonable
-  published list prices but should be refreshed from provider pricing pages
-  before board-level decisions.
+- **Pricing tables** live in `config/*.json` (with built-in defaults in
+  `finops/pricing_config.py`). They are reasonable published list prices but
+  should be refreshed from provider pricing pages before board-level
+  decisions.
 - **Routing policy** is the `BUDGET_ELIGIBLE_TASKS` set in `cost_calculator.py`.
   Tune it per product: add a task type there (and a budget model in
   `DEFAULT_BUDGET_MODEL_BY_TASK`) once an A/B eval proves quality parity.

@@ -73,6 +73,42 @@ def _arbitrage_section(result: ArbitrageResult) -> list[str]:
                  "`summarization` traffic to budget open-weight models "
                  "(Llama 3.x via Groq/Together). Run an A/B quality eval on "
                  "the top rerouted task before full cutover.\n")
+
+    lines.extend(_attribution_section(result))
+    return lines
+
+
+def _attribution_section(result: ArbitrageResult) -> list[str]:
+    """Unit-economics rollups by team / feature / customer (when tagged)."""
+    lines: list[str] = []
+    if not result.tagged_records:
+        return lines
+
+    coverage = 100.0 * result.tagged_records / max(1, result.records_analyzed)
+    lines.append(f"### Unit economics (attribution coverage: "
+                 f"{format_pct(coverage)} of records)\n")
+
+    for label, dim in (("Team", result.by_team),
+                       ("Feature / customer", result.by_feature)):
+        if not dim:
+            continue
+        lines.append(f"**{label}**\n")
+        lines.append("| Key | Calls/mo | Current $/mo | Optimized $/mo | Savings |")
+        lines.append("|---|---:|---:|---:|---:|")
+        for key, agg in sorted(dim.items(),
+                               key=lambda kv: kv[1]["current"], reverse=True):
+            calls_mo = agg["calls"] * (30.4 / result.sample_window_days)
+            saved = agg["current"] - agg["optimized"]
+            lines.append(f"| {key} | {calls_mo:,.0f} | "
+                         f"{format_usd(agg['current'])} | "
+                         f"{format_usd(agg['optimized'])} | "
+                         f"**{format_usd(saved)}** |")
+        lines.append("")
+
+    lines.append("> **Action:** Join these cost lines against revenue for the "
+                 "matching feature/customer keys to get true AI gross margin. "
+                 "Untagged traffic is invisible to unit economics — instrument "
+                 "it via LiteLLM metadata tags.\n")
     return lines
 
 

@@ -1,9 +1,9 @@
 # 💰 FinOps Arbitrage Audit — P&L Savings Report
 
-_Generated 2026-11-10 19:00 · AI & Cloud FinOps Arbitrage Engine v1.0_
+_Generated 2026-11-10 19:32 · AI & Cloud FinOps Arbitrage Engine v1.0_
 
-- Source (API usage log): `C:\Users\19726\.lmstudio\apps\bionic\projects\d49037d8-47f4-5808-9028-c707de117f8f\workspace\sample_data\api_logs.csv`
-- Source (Cloud inventory): `C:\Users\19726\.lmstudio\apps\bionic\projects\d49037d8-47f4-5808-9028-c707de117f8f\workspace\sample_data\inventory.json`
+- Source (API usage log): `C:\Users\19726\.lmstudio\apps\bionic\projects\e3c2b478-c6f4-4db2-b1c2-1ba07a4e9e9b\workspace\sample_data\api_logs.csv`
+- Source (Cloud inventory): `C:\Users\19726\.lmstudio\apps\bionic\projects\e3c2b478-c6f4-4db2-b1c2-1ba07a4e9e9b\workspace\sample_data\inventory.json`
 
 ## Executive Summary
 
